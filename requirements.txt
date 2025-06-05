@@ -1,0 +1,4 @@
+tequila-basic
+qulacs
+openfermion
+pyscf
