@@ -1,4 +1,4 @@
-tequila-basic
-qulacs
-openfermion
-pyscf
+tequila-basic==1.9.9
+qulacs==0.6.12
+openfermion==1.7.1
+pyscf==2.9.0
