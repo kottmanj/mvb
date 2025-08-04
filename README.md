@@ -3,7 +3,7 @@ The repository is designed to run the general procedure and show some example da
 
 The methods to rotate the integrals and extract the HCB Hamiltonian are defined in the file `measurements_utils.py`. The additional utils files are made to create the quantum circuit (for scenario 2).
 
-Free geometries have been generated with [quanti-gin](https://github.com/nylser/quanti-gin) and circuits depictions are made with [qpic](https://github.com/qpic/qpic).
+Randomized geometries have been generated with [quanti-gin](https://github.com/nylser/quanti-gin) and circuits depictions are made with [qpic](https://github.com/qpic/qpic).
 
 # installation
 `pip install -e .`
