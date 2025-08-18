@@ -9,8 +9,7 @@ from .block_utils import gates_to_orb_rot
 
 def fold_rotators(mol, UR):
     # Get the transformation matrix from the circuit
-    orb_coeff = mol.integral_manager.orbital_coefficients
-    UR_matrix = gates_to_orb_rot(UR, len(orb_coeff))
+    UR_matrix = gates_to_orb_rot(UR, mol.n_orbitals)
 
     # Rotate one- and two-body part
     c,h,g = mol.get_integrals()
