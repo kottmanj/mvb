@@ -1,16 +1,3 @@
-# import tequila as tq
-# import numpy as np
-# import openfermion as of
-# import scipy
-# import sunrise as sun
-# import os, sys
-# sys.path.append(os.path.abspath("../measurement-bases/"))
-# os.chdir(os.path.dirname(os.path.abspath(__file__))) # set working directory to file directory
-# from utils.block_utils import Block, gates_to_orb_rot
-# from utils.initializer_utils import initialize_rotators, initialize_blockcircuit, optimize, get_qpic
-# from utils.qpic_visualization import OrbitalRotatorGate, PairCorrelatorGate, GenericGate
-# from utils.measurement_utils import fold_rotators, get_one_body_operator, get_two_body_operator, get_hcb_part, rotate_and_hcb, compute_num_meas
-
 import tequila as tq
 import numpy as np
 import openfermion as of
@@ -68,7 +55,7 @@ variables = {}
 for block in blocks:
     variables.update({v:0 for v in block.extract_variables() if "r" in str(v)})
 
-debug = True
+debug = False
 if debug:
     print("------------------------------")
     print("TEST 1")
