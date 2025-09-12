@@ -9,8 +9,7 @@ from .block_utils import gates_to_orb_rot
 
 def fold_rotators(mol, UR):
     # Get the transformation matrix from the circuit
-    orb_coeff = mol.integral_manager.orbital_coefficients
-    UR_matrix = gates_to_orb_rot(UR, len(orb_coeff))
+    UR_matrix = gates_to_orb_rot(UR, mol.n_orbitals)
 
     # Rotate one- and two-body part
     c,h,g = mol.get_integrals()
@@ -25,20 +24,25 @@ def fold_rotators(mol, UR):
     tg = np.einsum("ixkl, jx -> ijkl", tg, UR_matrix, optimize='greedy')
     tg = np.einsum("xjkl, ix -> ijkl", tg, UR_matrix, optimize='greedy')
 
-    tmol = tq.Molecule(geometry=mol.parameters.geometry, nuclear_repulsion=c, one_body_integrals=th,
-                       two_body_integrals=tg, basis_set=mol.parameters.basis_set)
+    tmol = tq.Molecule(parameters=mol.parameters, transformation=mol.transformation, n_electrons=mol.n_electrons,
+                       nuclear_repulsion=c, one_body_integrals=th, two_body_integrals=tg, basis_set=mol.parameters.basis_set,
+                       ordering='openfermion')
 
     return tmol
 
 def get_one_body_operator(mol):
     c,h,g = mol.get_integrals()
     n = h.shape[0]
-    dummy = tq.Molecule(geometry=mol.parameters.geometry, one_body_integrals=h, two_body_integrals=np.zeros([n,n,n,n]), nuclear_repulsion=c)
+    dummy = tq.Molecule(parameters=mol.parameters, transformation=mol.transformation, n_electrons=mol.n_electrons,
+                        one_body_integrals=h, two_body_integrals=np.zeros([n,n,n,n]), nuclear_repulsion=c,
+                        ordering='openfermion')
     return dummy.make_hamiltonian()
 def get_two_body_operator(mol):
     c,h,g = mol.get_integrals()
     n = h.shape[0]
-    dummy = tq.Molecule(geometry=mol.parameters.geometry, one_body_integrals=np.zeros([n,n]), two_body_integrals=g, nuclear_repulsion=0.0)
+    dummy = tq.Molecule(parameters=mol.parameters, transformation=mol.transformation, n_electrons=mol.n_electrons,
+                        one_body_integrals=np.zeros([n,n]), two_body_integrals=g, nuclear_repulsion=0.0,
+                        ordering='openfermion')
     return dummy.make_hamiltonian()
 
 def get_hcb_part(mol, diagonal=False):
@@ -72,10 +76,10 @@ def get_hcb_part(mol, diagonal=False):
                             non_hcb_g[i][j][k][l] = g.elems[i][j][k][l]
 
     # With c and h
-    hcb_mol = tq.Molecule(geometry=mol.parameters.geometry, nuclear_repulsion=c, one_body_integrals=hcb_h, two_body_integrals=hcb_g,
-                          basis_set=mol.parameters.basis_set)
-    non_hcb_mol = tq.Molecule(geometry=mol.parameters.geometry, nuclear_repulsion=0, one_body_integrals=non_hcb_h, two_body_integrals=non_hcb_g,
-                              basis_set=mol.parameters.basis_set)
+    hcb_mol = tq.Molecule(parameters=mol.parameters, transformation=mol.transformation, n_electrons=mol.n_electrons,
+                          nuclear_repulsion=c, one_body_integrals=hcb_h, two_body_integrals=hcb_g, ordering='openfermion')
+    non_hcb_mol = tq.Molecule(parameters=mol.parameters, transformation=mol.transformation, n_electrons=mol.n_electrons,
+                              nuclear_repulsion=0, one_body_integrals=non_hcb_h, two_body_integrals=non_hcb_g, ordering='openfermion')
 
     return hcb_mol, non_hcb_mol
 
@@ -85,8 +89,9 @@ def sum_two_body_parts(molecule1, molecule2):
 
     sum_g = g1.elems + g2.elems
 
-    sum_mol = tq.Molecule(geometry=molecule1.parameters.geometry, nuclear_repulsion=0.0, one_body_integrals=np.zeros(shape=[np.shape(h1)[0],np.shape(h1)[1]]),
-                          two_body_integrals=sum_g, basis_set=molecule1.parameters.basis_set)
+    sum_mol = tq.Molecule(parameters=molecule1.parameters, transformation=molecule1.transformation, n_electrons=molecule1.n_electrons,
+                          nuclear_repulsion=0.0, one_body_integrals=np.zeros(shape=[np.shape(h1)[0],np.shape(h1)[1]]),
+                          two_body_integrals=sum_g, odering='openfermion')
     
     return sum_mol
 
